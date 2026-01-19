@@ -1,20 +1,21 @@
-# Resume Agent
+# Claude Project Scribe
 
-Claude Code 커스텀 에이전트를 활용한 프로젝트 분석 및 이력서 작성 도구입니다.
+Claude Code 커스텀 에이전트를 활용한 프로젝트 분석 및 문서화 도구입니다.
+프로젝트를 분석하여 이력서용 설명을 생성하고, 노션에 자동으로 게시합니다.
 
 ## 기능
 
 - **프로젝트 분석**: 코드베이스의 기술 스택, 구조, 주요 기능을 자동 분석
 - **이력서용 설명 생성**: 분석 결과를 바탕으로 3가지 포맷(상세/간결/한줄)의 프로젝트 설명 생성
-- **노션 게시**: 마크다운 콘텐츠를 노션 페이지에 자동 게시
+- **노션 게시**: 마크다운 콘텐츠를 노션 페이지에 자동 게시 (heading, list 등 모든 블록 타입 지원)
 
 ## 설치
 
 ### 1. 저장소 클론
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/resume-agent.git
-cd resume-agent
+git clone https://github.com/JeanYoungPark/claude-project-scribe.git
+cd claude-project-scribe
 ```
 
 ### 2. Notion API 설정
