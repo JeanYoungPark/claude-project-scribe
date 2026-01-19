@@ -1,0 +1,15 @@
+# Notion API 토큰 (민감 정보)
+.mcp.json
+
+# Claude Code 로컬 설정
+.claude/settings.local.json
+
+# macOS
+.DS_Store
+
+# Node modules (향후 확장 시)
+node_modules/
+
+# 환경 변수
+.env
+.env.local
