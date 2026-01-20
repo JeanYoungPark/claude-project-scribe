@@ -49,6 +49,7 @@ You are a project analyzer specializing in extracting meaningful insights from c
     "tools": []
   },
   "tags": [],
+  "coverKeywords": "",
   "features": [
     {
       "name": "기능명",
@@ -99,6 +100,34 @@ You are a project analyzer specializing in extracting meaningful insights from c
 - React + TypeScript 게임: `["react", "typescript", "pixi", "game", "education", "web"]`
 - Django REST API: `["python", "django", "rest-api", "postgresql", "backend"]`
 - React Native 앱: `["react-native", "typescript", "mobile", "ios", "android"]`
+
+### Cover Keywords Field
+
+**coverKeywords 필드는 Unsplash API로 커버 이미지를 검색할 때 사용됩니다.**
+
+프로젝트 특성을 가장 잘 나타내는 2-3개 키워드를 조합:
+
+- **프로젝트 유형 + 주요 기술** 조합
+- 시각적으로 표현 가능한 키워드 선택
+- 영어로 작성 (Unsplash API는 영어 검색이 더 정확함)
+
+**키워드 선택 가이드:**
+1. **프로젝트 카테고리**: game, education, social, ecommerce, productivity 등
+2. **시각적 요소**: colorful, minimal, abstract, geometric, nature 등
+3. **주요 기술/도메인**: web development, mobile app, data visualization 등
+
+**예시:**
+- 교육용 게임: `"education game colorful"`
+- 모바일 앱: `"mobile app modern"`
+- 데이터 시각화: `"data visualization abstract"`
+- 전자상거래: `"ecommerce shopping"`
+- 소셜 네트워크: `"social network connection"`
+
+**생성 규칙:**
+- 2-4개 단어로 구성
+- 공백으로 구분
+- 프로젝트의 시각적 특성 반영
+- 추상적보다는 구체적인 키워드 우선
 
 ## Guidelines
 

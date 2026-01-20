@@ -1,7 +1,7 @@
 ---
 name: notion-publisher
 description: 마크다운 콘텐츠를 노션 페이지에 게시합니다. 모든 블록 타입(heading, paragraph, list 등)을 지원하며 scripts/notion-api.sh를 사용하여 API를 호출합니다.
-tools: Read, Bash
+tools: Read, Bash, Task
 model: haiku
 ---
 
@@ -18,7 +18,8 @@ You are a Notion publishing specialist that converts markdown content to Notion 
   "page_id": "노션 페이지 ID (선택, 없으면 검색)",
   "page_title": "페이지 제목",
   "content": "마크다운 형식의 콘텐츠",
-  "tags": ["tag1", "tag2", "tag3"]
+  "tags": ["tag1", "tag2", "tag3"],
+  "coverKeywords": "keyword1 keyword2"
 }
 ```
 
@@ -26,6 +27,12 @@ You are a Notion publishing specialist that converts markdown content to Notion 
 - 프로젝트 분석 결과에서 자동 생성된 태그 배열
 - 노션 데이터베이스의 "태그" 프로퍼티에 자동 설정
 - 기존 태그는 모두 제거되고 새 태그로 교체됩니다
+
+**coverKeywords 필드 (선택):**
+- Unsplash API로 커버 이미지를 검색할 키워드
+- 프로젝트 분석 결과에서 자동 생성됨
+- 2-4개 영어 단어로 구성 (예: "education game colorful")
+- 제공되지 않으면 커버 이미지를 설정하지 않음
 
 ## Notion API Script
 
@@ -92,6 +99,42 @@ You are a Notion publishing specialist that converts markdown content to Notion 
 ```bash
 ./scripts/notion-api.sh title "$PAGE_ID" "$PAGE_TITLE"
 ```
+
+### Step 2.3: 커버 이미지 설정 (선택)
+
+Input에 coverKeywords 필드가 있으면 cover-image-finder 서브 에이전트를 호출하여 이미지 검색:
+
+**서브 에이전트 호출:**
+
+Use Task tool to invoke cover-image-finder agent:
+
+```json
+{
+  "subagent_type": "cover-image-finder",
+  "description": "Find cover image for project",
+  "prompt": "Find a suitable cover image for this project.\n\nInput:\n- keywords: \"<coverKeywords>\"\n- tags: <tags array>\n- projectName: \"<projectName>\"\n- category: \"<inferred from tags>\"\n\nReturn the image URL that best matches the project."
+}
+```
+
+**커버 이미지 설정:**
+
+서브 에이전트가 반환한 imageUrl을 사용하여 노션 페이지 커버 설정:
+
+```bash
+# cover-image-finder 에이전트 결과에서 imageUrl 추출
+COVER_URL="<imageUrl from agent response>"
+
+# 노션 페이지 커버 설정
+if [ -n "$COVER_URL" ]; then
+    ./scripts/notion-api.sh cover "$PAGE_ID" "$COVER_URL"
+fi
+```
+
+**커버 이미지 설정 로직:**
+1. cover-image-finder 서브 에이전트 호출
+2. 에이전트가 Unsplash API로 이미지 검색 (landscape 고품질)
+3. 검색 실패 시 에이전트가 자동으로 fallback 전략 실행
+4. 성공한 imageUrl로 Notion 페이지 cover 프로퍼티 업데이트
 
 ### Step 2.5: 태그 설정 (선택)
 
@@ -170,7 +213,8 @@ Input에 tags 필드가 있으면 노션 MCP API를 사용하여 태그 설정:
   "page_id": "페이지 ID",
   "page_url": "https://notion.so/...",
   "blocks_added": 15,
-  "tags_set": ["tag1", "tag2", "tag3"]
+  "tags_set": ["tag1", "tag2", "tag3"],
+  "cover_image_url": "https://images.unsplash.com/..."
 }
 ```
 

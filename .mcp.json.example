@@ -7,5 +7,6 @@
         "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer YOUR_NOTION_API_TOKEN\", \"Notion-Version\": \"2025-09-03\"}"
       }
     }
-  }
+  },
+  "unsplashApiKey": "YOUR_UNSPLASH_ACCESS_KEY"
 }

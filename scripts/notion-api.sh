@@ -120,6 +120,19 @@ update_page_title() {
         -d "{\"properties\": {\"title\": {\"title\": [{\"text\": {\"content\": \"$title\"}}]}}}"
 }
 
+# 페이지 커버 이미지 설정
+# Usage: set_page_cover <page_id> <image_url>
+set_page_cover() {
+    local page_id="$1"
+    local image_url="$2"
+
+    curl -s -X PATCH "https://api.notion.com/v1/pages/$page_id" \
+        -H "$AUTH_HEADER" \
+        -H "$VERSION_HEADER" \
+        -H "$CONTENT_HEADER" \
+        -d "{\"cover\": {\"type\": \"external\", \"external\": {\"url\": \"$image_url\"}}}"
+}
+
 # 페이지 검색
 # Usage: search_pages <query>
 search_pages() {
@@ -226,6 +239,9 @@ case "$1" in
     search)
         search_pages "$2"
         ;;
+    cover)
+        set_page_cover "$2" "$3"
+        ;;
     *)
         echo "Notion API Helper"
         echo ""
@@ -237,6 +253,7 @@ case "$1" in
         echo "  $0 get <page_id>"
         echo "  $0 title <page_id> <title>"
         echo "  $0 search <query>"
+        echo "  $0 cover <page_id> <image_url>"
         echo ""
         echo "Block types: heading_1, heading_2, heading_3, paragraph, bulleted_list_item, numbered_list_item, quote, callout, code, divider"
         echo ""
