@@ -46,6 +46,10 @@ add_block() {
         callout)
             block_json="{\"object\": \"block\", \"type\": \"callout\", \"callout\": {\"rich_text\": [{\"type\": \"text\", \"text\": {\"content\": \"$content\"}}]}}"
             ;;
+        code)
+            local language="${after_id:-javascript}"  # after_id를 language로 재사용
+            block_json="{\"object\": \"block\", \"type\": \"code\", \"code\": {\"rich_text\": [{\"type\": \"text\", \"text\": {\"content\": \"$content\"}}], \"language\": \"$language\"}}"
+            ;;
         divider)
             block_json="{\"object\": \"block\", \"type\": \"divider\", \"divider\": {}}"
             ;;
@@ -234,6 +238,9 @@ case "$1" in
         echo "  $0 title <page_id> <title>"
         echo "  $0 search <query>"
         echo ""
-        echo "Block types: heading_1, heading_2, heading_3, paragraph, bulleted_list_item, numbered_list_item, quote, callout, divider"
+        echo "Block types: heading_1, heading_2, heading_3, paragraph, bulleted_list_item, numbered_list_item, quote, callout, code, divider"
+        echo ""
+        echo "For code blocks: $0 add <page_id> code <content> <language>"
+        echo "Supported languages: javascript, python, java, typescript, bash, etc."
         ;;
 esac

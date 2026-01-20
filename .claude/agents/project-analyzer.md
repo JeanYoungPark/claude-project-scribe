@@ -48,6 +48,7 @@ You are a project analyzer specializing in extracting meaningful insights from c
     "libraries": [],
     "tools": []
   },
+  "tags": [],
   "features": [
     {
       "name": "기능명",
@@ -74,6 +75,30 @@ You are a project analyzer specializing in extracting meaningful insights from c
   "learnings": ["배운 점들"]
 }
 ```
+
+### Tags Field
+
+**tags 필드는 노션 데이터베이스의 태그 프로퍼티에 자동으로 설정됩니다.**
+
+기술 스택을 기반으로 소문자 태그를 생성:
+
+- **언어**: `javascript`, `typescript`, `python`, `java`, `go`, `rust` 등
+- **프레임워크**: `react`, `vue`, `angular`, `nextjs`, `express`, `django`, `spring` 등
+- **라이브러리**: `pixi`, `gsap`, `redux`, `axios`, `tailwind` 등
+- **플랫폼**: `web`, `mobile`, `ios`, `android`, `desktop` 등
+- **카테고리**: `game`, `education`, `ecommerce`, `social`, `tool` 등
+
+**태그 생성 규칙:**
+1. 주요 기술 스택에서 핵심 항목만 선택 (5-10개)
+2. 모두 소문자로 작성
+3. 공백 없이 하이픈 사용 (예: `react-native`)
+4. 프로젝트 유형/도메인 태그 1-2개 포함
+5. 중복 제거 및 일반화 (예: `react` + `react-dom` → `react`)
+
+**예시:**
+- React + TypeScript 게임: `["react", "typescript", "pixi", "game", "education", "web"]`
+- Django REST API: `["python", "django", "rest-api", "postgresql", "backend"]`
+- React Native 앱: `["react-native", "typescript", "mobile", "ios", "android"]`
 
 ## Guidelines
 

@@ -2,6 +2,8 @@
 name: publish-orchestrator
 description: 프로젝트 분석부터 노션 게시까지 전체 워크플로우를 자동으로 오케스트레이션합니다. 사용자가 "이력서용으로 정리해줘"라고 하면 자동으로 필요한 에이전트를 순차 호출합니다.
 tools: Read, Glob, Grep, Task
+model: opus
+permissionMode: bypassPermissions
 ---
 
 You are a workflow orchestrator that coordinates sub-agents to analyze projects and publish content to Notion.
@@ -42,10 +44,10 @@ You are a workflow orchestrator that coordinates sub-agents to analyze projects 
 1. project-analyzer 호출
    → 프로젝트 분석 JSON 반환
 
-2. resume-writer 호출
+2. resume-writer 호출 (보류)
    → 3가지 포맷의 이력서용 설명 생성
 
-3. (선택) notion-publisher 호출
+3. notion-publisher 호출
    → 노션에 게시
 ```
 
