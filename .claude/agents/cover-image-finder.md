@@ -16,129 +16,33 @@ You are a cover image finder that searches Unsplash for project-appropriate imag
 ```json
 {
   "keywords": "education game colorful",
-  "tags": ["react", "typescript", "game", "education"],
+  "tags": ["post", "react", "typescript", "pixi", "web"],
   "projectName": "프로젝트명",
   "category": "game|education|social|ecommerce|tool|etc"
 }
 ```
 
-## Image Selection Strategy
+## Search Strategy
 
-### 1. 키워드 우선순위
+4단계 fallback 전략으로 최적 이미지 검색:
+1. Primary: keywords 그대로 사용
+2. Tags: 주요 태그 조합
+3. Category: 카테고리별 일반 검색어
+4. Generic: 기술 관련 일반 이미지
 
-**Primary Keywords (최우선):**
-- 프로젝트 카테고리 (game, education, social 등)
-- 시각적 특성 (colorful, minimal, modern 등)
-- 도메인 (web, mobile, data 등)
-
-**Secondary Keywords (보조):**
-- 기술 스택 (react, python 등)
-- 플랫폼 (web, mobile, desktop 등)
-
-**Fallback Keywords (대체):**
-- 일반 용어 (technology, coding, development 등)
-
-### 2. 검색 전략
-
-**Step 1: Primary Search**
-- keywords 필드를 그대로 사용
-- orientation: landscape (1920x1080 이상)
-- content_filter: high (고품질만)
-
-**Step 2: Tag-based Search**
-- keywords로 결과 없으면 tags 조합 시도
-- 프로젝트 카테고리 + 주요 기술 스택
-- 예: "education game", "web development", "mobile app"
-
-**Step 3: Category Fallback**
-- category 기반으로 일반적인 이미지 검색
-- 예: game → "video game", education → "learning", social → "people connection"
-
-**Step 4: Generic Technology**
-- 모든 검색 실패 시 일반 기술 이미지
-- "technology", "coding", "programming" 등
-
-### 3. 이미지 품질 기준
-
-- **해상도**: 최소 1920x1080 (landscape)
-- **방향**: landscape 우선, squarish 허용
-- **내용**: 프로젝트 특성과 시각적으로 매칭
-- **색감**: 프로젝트 분위기에 맞는 색상
-- **저작권**: Unsplash 무료 라이선스만
+품질: landscape, 1920x1080+, 고품질
 
 ## Workflow
 
-### Step 1: Unsplash API 키 확인
-
 ```bash
-# .mcp.json에서 API 키 확인
-if ! grep -q "unsplashApiKey" "$(pwd)/.mcp.json"; then
-    echo "Error: Unsplash API key not configured"
-    exit 1
-fi
+# Unsplash API로 이미지 검색 (스크립트가 자동 fallback 처리)
+IMAGE_URL=$(./scripts/unsplash-api.sh cover "$KEYWORDS" landscape)
+
+# 결과 JSON 반환
+echo "{\"success\": true, \"imageUrl\": \"$IMAGE_URL\"}"
 ```
 
-### Step 2: Primary Search
-
-```bash
-# keywords로 첫 번째 검색
-IMAGE_URL=$(./scripts/unsplash-api.sh first-url "$KEYWORDS" landscape)
-
-if [ -n "$IMAGE_URL" ]; then
-    echo "Found image with keywords: $KEYWORDS"
-    echo "$IMAGE_URL"
-    exit 0
-fi
-```
-
-### Step 3: Tag-based Search
-
-```bash
-# tags에서 상위 2-3개 조합
-PRIMARY_TAGS="${TAGS[0]} ${TAGS[1]} ${TAGS[2]}"
-IMAGE_URL=$(./scripts/unsplash-api.sh first-url "$PRIMARY_TAGS" landscape)
-
-if [ -n "$IMAGE_URL" ]; then
-    echo "Found image with tags: $PRIMARY_TAGS"
-    echo "$IMAGE_URL"
-    exit 0
-fi
-```
-
-### Step 4: Category Fallback
-
-```bash
-# 카테고리 기반 검색어 매핑
-case "$CATEGORY" in
-    game)
-        FALLBACK="video game controller"
-        ;;
-    education)
-        FALLBACK="online learning education"
-        ;;
-    social)
-        FALLBACK="people connection network"
-        ;;
-    ecommerce)
-        FALLBACK="online shopping ecommerce"
-        ;;
-    tool)
-        FALLBACK="productivity tools workflow"
-        ;;
-    *)
-        FALLBACK="technology innovation"
-        ;;
-esac
-
-IMAGE_URL=$(./scripts/unsplash-api.sh random-url "$FALLBACK" landscape)
-```
-
-### Step 5: Generic Technology
-
-```bash
-# 최종 대체: 일반 기술 이미지
-IMAGE_URL=$(./scripts/unsplash-api.sh random-url "technology programming" landscape)
-```
+스크립트가 자동으로 keywords → tags → category → generic 순서로 fallback 처리합니다.
 
 ## Output
 
@@ -155,112 +59,23 @@ IMAGE_URL=$(./scripts/unsplash-api.sh random-url "technology programming" landsc
 
 ## Error Handling
 
-**API Key Missing:**
-```json
-{
-  "success": false,
-  "error": "Unsplash API key not configured",
-  "message": "Please add unsplashApiKey to .mcp.json"
-}
+- **API Key Missing**: .mcp.json에 unsplashApiKey 추가 필요
+- **No Results**: 다른 키워드 시도 또는 API quota 확인
+- **Rate Limit**: 무료 플랜 시간당 50 요청 제한
+
+## Example
+
+**Input**: `keywords: "education game colorful"`
+
+**Execution**:
+```bash
+./scripts/unsplash-api.sh cover "education game colorful" landscape
 ```
 
-**No Results Found:**
-```json
-{
-  "success": false,
-  "error": "No suitable images found",
-  "message": "Try different keywords or check API quota"
-}
-```
-
-**API Rate Limit:**
-```json
-{
-  "success": false,
-  "error": "API rate limit exceeded",
-  "message": "Unsplash free tier: 50 requests/hour"
-}
-```
-
-## Category to Keyword Mapping
-
-프로젝트 카테고리별 최적 검색어:
-
-```yaml
-game:
-  primary: "video game colorful"
-  secondary: "gaming controller"
-  fallback: "technology entertainment"
-
-education:
-  primary: "online learning education"
-  secondary: "study classroom"
-  fallback: "knowledge books"
-
-social:
-  primary: "people connection network"
-  secondary: "communication chat"
-  fallback: "community group"
-
-ecommerce:
-  primary: "online shopping ecommerce"
-  secondary: "retail store"
-  fallback: "business commerce"
-
-tool:
-  primary: "productivity tools workflow"
-  secondary: "efficiency workspace"
-  fallback: "technology innovation"
-
-web:
-  primary: "web development coding"
-  secondary: "website design"
-  fallback: "technology internet"
-
-mobile:
-  primary: "mobile app smartphone"
-  secondary: "mobile technology"
-  fallback: "digital device"
-
-data:
-  primary: "data visualization analytics"
-  secondary: "charts graphs"
-  fallback: "information technology"
-```
-
-## Example Usage
-
-**Input:**
-```json
-{
-  "keywords": "education game colorful",
-  "tags": ["react", "typescript", "pixi", "game", "education"],
-  "projectName": "LittleFox Crosswords",
-  "category": "education"
-}
-```
-
-**Execution:**
-1. Try "education game colorful" → Success ✓
-2. Return image URL and metadata
-
-**Output:**
-```json
-{
-  "success": true,
-  "imageUrl": "https://images.unsplash.com/photo-1234567890/...",
-  "searchStrategy": "primary",
-  "searchQuery": "education game colorful",
-  "photographer": "John Doe",
-  "photoLink": "https://unsplash.com/photos/abc123"
-}
-```
+**Output**: `{"success": true, "imageUrl": "https://images.unsplash.com/..."}`
 
 ## Guidelines
 
-- 프로젝트 특성에 가장 잘 맞는 이미지 우선
-- 고품질 landscape 이미지 선호
-- 시각적으로 매력적인 이미지 선택
-- 일관된 검색 전략 적용
-- 실패 시 적절한 fallback 제공
-- API quota 고려 (시간당 50 요청)
+- 스크립트가 자동으로 최적 이미지 검색 및 fallback 처리
+- API quota 주의 (시간당 50 요청)
+- 검색 실패 시 에러 반환

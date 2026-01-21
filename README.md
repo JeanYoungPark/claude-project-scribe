@@ -30,21 +30,7 @@ cd claude-project-scribe
 cp .mcp.json.example .mcp.json
 ```
 
-```json
-{
-  "mcpServers": {
-    "notion": {
-      "command": "npx",
-      "args": ["-y", "@notionhq/notion-mcp-server"],
-      "env": {
-        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer YOUR_NOTION_API_TOKEN\", \"Notion-Version\": \"2025-09-03\"}"
-      }
-    }
-  }
-}
-```
-
-4. 노션에서 게시할 페이지에 통합 연결 (페이지 우상단 ... → 연결 → 생성한 통합 선택)
+1. 노션에서 게시할 페이지에 통합 연결 (페이지 우상단 ... → 연결 → 생성한 통합 선택)
 
 ### 3. Unsplash API 설정 (선택 - 커버 이미지 기능 사용 시)
 
@@ -52,15 +38,6 @@ cp .mcp.json.example .mcp.json
 2. 새 애플리케이션 등록 (Your Apps → New Application)
 3. Access Key 복사
 4. `.mcp.json`에 API 키 추가:
-
-```json
-{
-  "mcpServers": {
-    "notion": { ... }
-  },
-  "unsplashApiKey": "YOUR_UNSPLASH_ACCESS_KEY"
-}
-```
 
 **주의**: 커버 이미지 기능을 사용하지 않으려면 이 단계를 건너뛰어도 됩니다. 태그와 본문 게시는 정상 작동합니다.
 
@@ -80,8 +57,6 @@ brew install jq     # macOS (jq가 없는 경우)
 
 ## 사용법
 
-### Claude Code에서 에이전트 실행
-
 ```bash
 # 프로젝트 분석 후 이력서용 설명 생성
 claude "이 프로젝트 분석해서 이력서용으로 정리해줘"
@@ -93,45 +68,7 @@ claude "이 프로젝트 분석해줘"
 claude "이 내용을 노션에 게시해줘"
 ```
 
-### Notion API 스크립트 직접 사용
-
-```bash
-# 페이지 검색
-./scripts/notion-api.sh search "페이지 제목"
-
-# 블록 추가
-./scripts/notion-api.sh add <page_id> heading_2 "섹션 제목"
-./scripts/notion-api.sh add <page_id> paragraph "본문 내용"
-./scripts/notion-api.sh add <page_id> bulleted_list_item "리스트 항목"
-./scripts/notion-api.sh add <page_id> code "const x = 1;" javascript
-./scripts/notion-api.sh add <page_id> quote "중요한 인용문"
-./scripts/notion-api.sh add <page_id> callout "💡 유용한 팁"
-
-# 커버 이미지 설정
-./scripts/notion-api.sh cover <page_id> "https://images.unsplash.com/..."
-
-# 마크다운 일괄 추가
-./scripts/notion-api.sh add-markdown <page_id> "$MARKDOWN_CONTENT"
-
-# 블록 조회
-./scripts/notion-api.sh get <page_id>
-
-# 블록 삭제
-./scripts/notion-api.sh delete <block_id>
-```
-
-### Unsplash API 스크립트 사용
-
-```bash
-# 키워드로 이미지 검색
-./scripts/unsplash-api.sh search "react typescript" landscape 5
-
-# 랜덤 이미지 URL 가져오기
-./scripts/unsplash-api.sh random-url "education game"
-
-# 프로젝트 태그로 커버 이미지 URL 가져오기
-./scripts/unsplash-api.sh cover "react,typescript,game" landscape
-```
+**참고**: 스크립트를 직접 사용해야 하는 경우 `./scripts/notion-api.sh --help` 또는 `./scripts/unsplash-api.sh --help` 참조
 
 ## 에이전트 구조
 
@@ -163,7 +100,6 @@ claude "이 내용을 노션에 게시해줘"
 | `- 항목` | bulleted_list_item | 불릿 목록 |
 | `1. 항목` | numbered_list_item | 번호 목록 |
 | `> 인용` | quote | 인용문 |
-| N/A | callout | 강조 박스 |
 | ` ```언어` | code | 코드 블록 |
 | `---` | divider | 구분선 |
 
